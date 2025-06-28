@@ -1,5 +1,6 @@
 const { ApolloServer } = require('@apollo/server');
 const { expressMiddleware } = require('@apollo/server/express4');
+const { ApolloServerPluginLandingPageLocalDefault } = require('@apollo/server/plugin/landingPage/default');
 const express = require('express');
 const http = require('http');
 const helmet = require('helmet');
@@ -10,6 +11,8 @@ const { json } = require('body-parser');
 const typeDefs = require('./schema/typeDefs');
 const resolvers = require('./resolvers');
 const { getUser } = require('./utils/auth');
+const { createLoaders } = require('./utils/dataLoaders');
+const { getBindAddress, generateServerUrls } = require('./utils/hostDetector');
 
 const startServer = async () => {
   const app = express();
@@ -19,12 +22,20 @@ const startServer = async () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    plugins: [
+      // Enable GraphQL Playground in development
+      ApolloServerPluginLandingPageLocalDefault({ embed: true }),
+    ],
+    introspection: true, // Enable introspection
   });
 
   await server.start();
   
   // Middleware
-  app.use(helmet({ crossOriginEmbedderPolicy: false }));
+  app.use(helmet({ 
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: false, // Disable CSP for GraphQL Playground
+  }));
   app.use(cors());
   app.use(morgan('dev'));
   
@@ -32,18 +43,36 @@ const startServer = async () => {
   app.use('/graphql', 
     json(),
     expressMiddleware(server, {
-      context: async ({ req }) => ({
-        token: req.headers.authorization,
-        user: getUser({ token: req.headers.authorization }),
-      }),
+      context: async ({ req }) => {
+        const token = req.headers.authorization;
+        const user = getUser({ token });
+        const loaders = createLoaders();
+        
+        return {
+          token,
+          user,
+          loaders,
+        };
+      },
     })
   );
 
+  // Health check endpoint
+  app.get('/health', (req, res) => {
+    res.json({ status: 'OK', message: 'GraphQL API is running' });
+  });
+
   // Start server
   const PORT = process.env.PORT || 4000;
-  httpServer.listen(PORT, () => {
-    console.log(`🚀 Server ready at http://localhost:${PORT}/graphql`);
-    console.log(`📊 GraphQL Playground available at http://localhost:${PORT}/graphql`);
+  const bindAddress = getBindAddress();
+  httpServer.listen(PORT, bindAddress, () => {
+    const serverUrls = generateServerUrls(PORT);
+    console.log('🚀 Server ready at');
+    serverUrls.all.forEach(url => console.log(`  - ${url}/graphql`));
+    console.log('📊 GraphQL Playground available at');
+    serverUrls.all.forEach(url => console.log(`  - ${url}/graphql`));
+    console.log('🔍 Health check available at');
+    serverUrls.all.forEach(url => console.log(`  - ${url}/health`));
   });
 };
 
