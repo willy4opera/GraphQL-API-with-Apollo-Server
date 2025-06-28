@@ -102,38 +102,43 @@ const posts = [
   },
 ];
 
-const comments = [
-  {
-    id: uuidv4(),
-    content: 'Great introduction to GraphQL! Very helpful for beginners.',
-    authorId: users[1].id,
-    postId: posts[0].id,
-    parentCommentId: null,
-    likes: [],
-    createdAt: new Date('2024-02-16').toISOString(),
-    updatedAt: new Date('2024-02-16').toISOString(),
-  },
-  {
-    id: uuidv4(),
-    content: 'I agree! The examples really helped me understand the concepts.',
-    authorId: users[2].id,
-    postId: posts[0].id,
-    parentCommentId: comments[0]?.id,
-    likes: [],
-    createdAt: new Date('2024-02-17').toISOString(),
-    updatedAt: new Date('2024-02-17').toISOString(),
-  },
-  {
-    id: uuidv4(),
-    content: 'These design principles are exactly what I needed for my current project.',
-    authorId: users[0].id,
-    postId: posts[1].id,
-    parentCommentId: null,
-    likes: [],
-    createdAt: new Date('2024-02-21').toISOString(),
-    updatedAt: new Date('2024-02-21').toISOString(),
-  },
-];
+const comments = [];
+
+// Initialize comments after posts are created
+const comment1 = {
+  id: uuidv4(),
+  content: 'Great introduction to GraphQL! Very helpful for beginners.',
+  authorId: users[1].id,
+  postId: posts[0].id,
+  parentCommentId: null,
+  likes: [],
+  createdAt: new Date('2024-02-16').toISOString(),
+  updatedAt: new Date('2024-02-16').toISOString(),
+};
+
+const comment2 = {
+  id: uuidv4(),
+  content: 'I agree! The examples really helped me understand the concepts.',
+  authorId: users[2].id,
+  postId: posts[0].id,
+  parentCommentId: comment1.id,
+  likes: [],
+  createdAt: new Date('2024-02-17').toISOString(),
+  updatedAt: new Date('2024-02-17').toISOString(),
+};
+
+const comment3 = {
+  id: uuidv4(),
+  content: 'These design principles are exactly what I needed for my current project.',
+  authorId: users[0].id,
+  postId: posts[1].id,
+  parentCommentId: null,
+  likes: [],
+  createdAt: new Date('2024-02-21').toISOString(),
+  updatedAt: new Date('2024-02-21').toISOString(),
+};
+
+comments.push(comment1, comment2, comment3);
 
 module.exports = {
   users,

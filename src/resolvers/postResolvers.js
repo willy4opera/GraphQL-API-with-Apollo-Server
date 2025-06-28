@@ -2,7 +2,7 @@ const { users, posts, comments } = require('../models/mockData');
 const { validateInput, createPostSchema, updatePostSchema } = require('../utils/validation');
 const { requireAuth } = require('../utils/auth');
 const { v4: uuidv4 } = require('uuid');
-const slug = require('slug');
+const { default: slug } = require('slug');
 
 const postResolvers = {
   Query: {
