@@ -2,7 +2,6 @@ const { users, posts, comments } = require('../models/mockData');
 const { validateInput, createUserSchema, updateUserSchema, loginSchema } = require('../utils/validation');
 const { hashPassword, comparePassword, generateToken, requireAuth } = require('../utils/auth');
 const { v4: uuidv4 } = require('uuid');
-const slug = require('slug');
 
 const userResolvers = {
   Query: {

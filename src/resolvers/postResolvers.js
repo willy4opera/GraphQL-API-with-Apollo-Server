@@ -2,7 +2,7 @@ const { users, posts, comments } = require('../models/mockData');
 const { validateInput, createPostSchema, updatePostSchema } = require('../utils/validation');
 const { requireAuth } = require('../utils/auth');
 const { v4: uuidv4 } = require('uuid');
-const { default: slug } = require('slug');
+const slugify = require('slugify');
 
 const postResolvers = {
   Query: {
@@ -95,7 +95,7 @@ const postResolvers = {
         title: validatedInput.title,
         content: validatedInput.content,
         excerpt: validatedInput.excerpt || '',
-        slug: slug(validatedInput.title),
+        slug: slugify(validatedInput.title),
         authorId: authUser.userId,
         comments: [],
         likes: [],
@@ -128,7 +128,7 @@ const postResolvers = {
       posts[postIndex] = {
         ...posts[postIndex],
         ...validatedInput,
-        slug: validatedInput.title ? slug(validatedInput.title) : posts[postIndex].slug,
+        slug: validatedInput.title ? slugify(validatedInput.title) : posts[postIndex].slug,
         updatedAt: new Date().toISOString(),
       };
 
