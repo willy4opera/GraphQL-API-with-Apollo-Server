@@ -21,12 +21,13 @@ A comprehensive GraphQL API built with Apollo Server demonstrating modern GraphQ
 
 ## 📋 Table of Contents
 
+- [Quick Docker Deployment](#-quick-docker-deployment)
 - [Installation](#-installation)
 - [Quick Start](#-quick-start)
 - [Deployment](#-deployment)
 - [API Documentation](#-api-documentation)
 - [Environment Variables](#-environment-variables)
-- [Docker Deployment](#-docker-deployment)
+- [Production Deployment Guide](DEPLOYMENT.md)
 - [Testing](#-testing)
 - [Project Structure](#-project-structure)
 - [Contributing](#-contributing)
@@ -38,6 +39,26 @@ A comprehensive GraphQL API built with Apollo Server demonstrating modern GraphQ
 - Node.js 18+ 
 - npm or yarn
 - Docker (optional, for containerized deployment)
+
+## 🚀 Quick Docker Deployment
+
+For guaranteed portability across any environment, use Docker:
+
+```bash
+# 1. Install Docker (see DEPLOYMENT.md for details)
+# 2. Clone and deploy
+git clone https://github.com/willy4opera/GraphQL-API-with-Apollo-Server.git
+cd GraphQL-API-with-Apollo-Server
+docker build -t graphql-api .
+docker run -d --name graphql-api -p 4000:4000 \
+  -e NODE_ENV=production \
+  -e JWT_SECRET=your-production-secret \
+  graphql-api
+```
+
+✅ **Access your API**: `http://your-server:4000/graphql`
+
+📖 **Complete deployment guide**: See [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ### Local Setup
 
