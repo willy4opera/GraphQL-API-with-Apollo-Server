@@ -21,6 +21,7 @@ A comprehensive GraphQL API built with Apollo Server demonstrating modern GraphQ
 
 ## 📋 Table of Contents
 - [Using Authenticated Queries](#-using-authenticated-queries)
+- [Sample Authentication Process](SAMPLE_AUTH_PROCESS.md)
 
 - [Quick Docker Deployment](#-quick-docker-deployment)
 - [Installation](#-installation)
@@ -136,6 +137,8 @@ mutation CreatePost {
 ```
 
 Replace `YOUR_JWT_TOKEN` with the token received from the login mutation.
+
+📖 **See complete sample authentication process**: [SAMPLE_AUTH_PROCESS.md](SAMPLE_AUTH_PROCESS.md)
 
 **Command Line Example:**
 
