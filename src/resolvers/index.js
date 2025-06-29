@@ -19,7 +19,6 @@ const resolvers = {
   User: userResolvers.User,
   Post: postResolvers.Post,
   Comment: commentResolvers.Comment,
-  SearchResult: searchResolvers.SearchResult,
 };
 
 module.exports = resolvers;

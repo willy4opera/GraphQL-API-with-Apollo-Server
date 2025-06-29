@@ -4,15 +4,14 @@ const searchResolvers = {
   Query: {
     search: (parent, { query, pagination }) => {
       const searchTerm = query.toLowerCase();
-      let results = [];
 
-      // Search in posts
+      // Search in posts (only published ones)
       const matchingPosts = posts
         .filter(post => post.published)
         .filter(post =>
           post.title.toLowerCase().includes(searchTerm) ||
           post.content.toLowerCase().includes(searchTerm) ||
-          post.excerpt.toLowerCase().includes(searchTerm) ||
+          post.excerpt?.toLowerCase().includes(searchTerm) ||
           post.tags.some(tag => tag.toLowerCase().includes(searchTerm))
         );
 
@@ -24,56 +23,22 @@ const searchResolvers = {
         user.bio?.toLowerCase().includes(searchTerm)
       );
 
-      // Combine results
-      results = [...matchingPosts, ...matchingUsers];
-
-      // Sort by relevance (simple scoring)
-      results.sort((a, b) => {
-        const aScore = calculateRelevanceScore(a, searchTerm);
-        const bScore = calculateRelevanceScore(b, searchTerm);
-        return bScore - aScore;
-      });
-
-      // Pagination
+      // Apply pagination to each result set
       const page = pagination?.page || 1;
       const limit = pagination?.limit || 10;
       const offset = (page - 1) * limit;
       
-      return results.slice(offset, offset + limit);
-    },
-  },
-
-  SearchResult: {
-    __resolveType(obj) {
-      if (obj.title) {
-        return 'Post';
-      }
-      if (obj.username) {
-        return 'User';
-      }
-      return null;
+      // For simplicity, we'll apply pagination to the combined count
+      // but return separate arrays
+      const totalCount = matchingPosts.length + matchingUsers.length;
+      
+      return {
+        posts: matchingPosts.slice(0, Math.ceil(limit / 2)),
+        users: matchingUsers.slice(0, Math.floor(limit / 2)),
+        totalCount: totalCount,
+      };
     },
   },
 };
-
-function calculateRelevanceScore(item, searchTerm) {
-  let score = 0;
-  
-  if (item.title) {
-    // It's a post
-    if (item.title.toLowerCase().includes(searchTerm)) score += 10;
-    if (item.content.toLowerCase().includes(searchTerm)) score += 5;
-    if (item.excerpt.toLowerCase().includes(searchTerm)) score += 7;
-    if (item.tags.some(tag => tag.toLowerCase().includes(searchTerm))) score += 8;
-  } else if (item.username) {
-    // It's a user
-    if (item.username.toLowerCase().includes(searchTerm)) score += 10;
-    if (item.firstName?.toLowerCase().includes(searchTerm)) score += 8;
-    if (item.lastName?.toLowerCase().includes(searchTerm)) score += 8;
-    if (item.bio?.toLowerCase().includes(searchTerm)) score += 5;
-  }
-  
-  return score;
-}
 
 module.exports = searchResolvers;

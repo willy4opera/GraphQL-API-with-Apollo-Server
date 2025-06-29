@@ -167,11 +167,15 @@ const typeDefs = gql`
     comments(postId: ID!, pagination: PaginationInput): [Comment!]!
     
     # Search
-    search(query: String!, pagination: PaginationInput): SearchResult!
+    search(query: String!, pagination: PaginationInput): SearchResults!
   }
 
   # Search result union type
-  union SearchResult = Post | User
+  type SearchResults {
+    posts: [Post!]!
+    users: [User!]!
+    totalCount: Int!
+  }
 
   # Mutation type
   type Mutation {
