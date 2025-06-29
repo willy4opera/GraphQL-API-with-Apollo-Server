@@ -263,6 +263,28 @@ mutation ReplyToComment {
 ```graphql
 query SearchContent {
   search(query: "GraphQL", pagination: { page: 1, limit: 10 }) {
+    posts {
+      id
+      title
+      excerpt
+      author {
+        username
+      }
+      tags
+    }
+    users {
+      id
+      username
+      firstName
+      lastName
+      bio
+    }
+    totalCount
+  }
+}
+```
+query SearchContent {
+  search(query: "GraphQL", pagination: { page: 1, limit: 10 }) {
     ... on Post {
       id
       title

@@ -20,6 +20,7 @@ A comprehensive GraphQL API built with Apollo Server demonstrating modern GraphQ
 - **Mock Database**: In-memory data for testing and development
 
 ## 📋 Table of Contents
+- [Using Authenticated Queries](#-using-authenticated-queries)
 
 - [Quick Docker Deployment](#-quick-docker-deployment)
 - [Installation](#-installation)
@@ -57,6 +58,94 @@ docker run -d --name graphql-api -p 4000:4000 \
 ```
 
 ✅ **Access your API**: `http://your-server:4000/graphql`
+
+## 🔐 Using Authenticated Queries
+
+To perform actions that require authentication, such as creating a post or liking a comment, you'll need to generate a token and use it in your requests.
+
+### **1. Register a New User**
+
+First, ensure the user is registered.
+
+```graphql
+mutation RegisterUser {
+  register(input: {
+    username: "newuser"
+    email: "newuser@example.com"
+    password: "strongpassword"
+    firstName: "New"
+    lastName: "User"
+  }) {
+    token
+    user {
+      id
+      username
+      email
+    }
+  }
+}
+```
+
+### **2. Login to Get a Token**
+
+Use the login mutation to get your authentication token.
+
+```graphql
+mutation LoginUser {
+  login(email: "newuser@example.com", password: "strongpassword") {
+    token
+    user {
+      id
+      username
+      email
+    }
+  }
+}
+```
+
+Save the token, as it will be used in the `Authorization` header for future requests.
+
+### **3. Use the Token with Queries**
+
+Include the token in your GraphQL query headers to perform authenticated actions.
+
+#### Example: Create a Post
+
+```graphql
+mutation CreatePost {
+  createPost(input: {
+    title: "My First Authenticated Post"
+    content: "This post demonstrates using a token for authentication."
+    excerpt: "Authenticated post example"
+    tags: ["Auth", "GraphQL", "API"]
+    published: true
+  }) {
+    id
+    title
+    content
+  }
+}
+```
+
+**Request Headers:**
+
+```json
+{
+  "Authorization": "Bearer YOUR_JWT_TOKEN"
+}
+```
+
+Replace `YOUR_JWT_TOKEN` with the token received from the login mutation.
+
+**Command Line Example:**
+
+```bash
+curl -X POST http://localhost:4000/graphql \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{"query": "mutation CreatePost { createPost(input: { title: "My First Post", content: "Post content", published: true }) { id title } }"}"'
+```
+
 
 📖 **Complete deployment guide**: See [DEPLOYMENT.md](DEPLOYMENT.md)
 
